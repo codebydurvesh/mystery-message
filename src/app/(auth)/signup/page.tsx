@@ -32,7 +32,6 @@ const page = () => {
   const debounced = useDebounceCallback(setUsername, 500);
   const router = useRouter();
 
-  const [password, setPassword] = useState("");
 
   // zod implementation
   const form = useForm<z.infer<typeof signUpSchema>>({
