@@ -37,21 +37,29 @@ const page = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    const result = await signIn("credentials", {
-      redirect: false,
-      identifier: data.identifier,
-      password: data.password,
-    });
-    if (result?.error) {
-      if (result.error === "CredentialsSignin") {
-        toast.error("Invalid email or password");
-      } else {
-        toast.error(result.error);
+    setIsSubmitting(true);
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        identifier: data.identifier,
+        password: data.password,
+      });
+
+      if (result?.error) {
+        if (result.error === "CredentialsSignin") {
+          toast.error("Invalid email/username or password");
+        } else {
+          toast.error(result.error);
+        }
+        return;
       }
-    }
-    if (result?.url) {
-      toast.success("Signed in successfully!");
-      router.replace("/");
+
+      if (result?.ok) {
+        toast.success("Signed in successfully!");
+        router.replace("/dashboard");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
