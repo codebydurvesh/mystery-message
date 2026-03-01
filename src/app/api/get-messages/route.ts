@@ -51,6 +51,7 @@ export async function GET(request: Request) {
       { status: 200 },
     );
   } catch (error) {
+    console.log("Error finding user messages ", error);
     return Response.json(
       {
         success: false,
