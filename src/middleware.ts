@@ -5,21 +5,46 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(request: NextRequest) {
   const token = await getToken({
     req: request,
-    secret: process.env.NEXT_AUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET ?? process.env.NEXT_AUTH_SECRET,
   });
+
   const { pathname } = request.nextUrl;
+
   const isLoggedIn = Boolean(token);
+  const isVerified = Boolean(token?.isVerified);
+  const username = typeof token?.username === "string" ? token.username : "";
+
   const isAuthPage =
     pathname.startsWith("/signin") ||
     pathname.startsWith("/signup") ||
     pathname.startsWith("/verify");
+  const isVerifyPage = pathname.startsWith("/verify");
+  const isDashboardPage = pathname.startsWith("/dashboard");
+
+  if (!isLoggedIn && isDashboardPage) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
 
   if (isLoggedIn && isAuthPage) {
+    if (!isVerified) {
+      if (isVerifyPage) {
+        return NextResponse.next();
+      }
+
+      if (username) {
+        return NextResponse.redirect(
+          new URL(`/verify/${username}`, request.url),
+        );
+      }
+
+      return NextResponse.next();
+    }
+
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (!isLoggedIn && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/signin", request.url));
+  if (isLoggedIn && !isVerified && isDashboardPage && username) {
+    return NextResponse.redirect(new URL(`/verify/${username}`, request.url));
   }
 
   return NextResponse.next();
@@ -27,5 +52,5 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/signin", "/signup", "/verify/:path*", "/", "/dashboard/:path*"],
+  matcher: ["/signin", "/signup", "/verify/:path*", "/dashboard/:path*"],
 };
