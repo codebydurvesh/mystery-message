@@ -28,9 +28,13 @@ const page = () => {
   };
 
   const { data: session } = useSession();
+  console.log("API Session: ", session);
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
+    defaultValues: {
+      acceptMessages: false,
+    },
   });
 
   const { register, watch, setValue } = form;
@@ -40,9 +44,9 @@ const page = () => {
   const fetchAcceptMessage = useCallback(async () => {
     setIsSwitchLoading(true);
     try {
-      const response = await axios.get<ApiResponse, any>(
-        "/api/accept-messages",
-      );
+      const response = await axios.get<ApiResponse, any>("/api/get-messages", {
+        withCredentials: true,
+      });
       setValue("acceptMessages", response.data.isAcceptingMessages);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -63,6 +67,7 @@ const page = () => {
       try {
         const response = await axios.get<ApiResponse, any>("/api/get-messages");
         setMessages(response.data.messages || []);
+        console.log("Fetched Messages: ", response.data.messages); //console log, REMOVE LATER
         if (refresh) {
           toast.success("Showing latest Messages");
         }
@@ -90,9 +95,15 @@ const page = () => {
   //handle switch change
   const handleSwitchChange = async () => {
     try {
-      const response = await axios.post<ApiResponse>("/api/accept-messages", {
-        acceptMessages: !acceptMessages,
-      });
+      const response = await axios.post<ApiResponse>(
+        "/api/accept-messages",
+        {
+          acceptMessages: !acceptMessages,
+        },
+        {
+          withCredentials: true,
+        },
+      );
       setValue("acceptMessages", !acceptMessages);
       toast.success(response.data.message);
     } catch (error) {
@@ -106,20 +117,34 @@ const page = () => {
     }
   };
 
-//   console.log("Session: ", session?.user);
+  //   console.log("Session: ", session?.user);
   //   const { username } = session?.user as User;
-  const username = session?.user?.username;
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  // const username = session?.user?.username;
+  // const baseUrl = `${window.location.protocol}//${window.location.host}`; //showing error
 
-  const profileUrl = username ? `${baseUrl}/u/${username}` : "";
+  // const profileUrl = username ? `${baseUrl}/u/${username}` : "";
+
+  // const copyToClipboard = () => {
+  //   navigator.clipboard.writeText(profileUrl);
+  //   toast.success("Profile URL copied to clipboard");
+  // };
+  const username = session?.user?.username;
+  const profilePath = username ? `/u/${username}` : "";
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl);
+    if (!username) return;
+
+    const fullUrl = `${window.location.origin}${profilePath}`;
+    navigator.clipboard.writeText(fullUrl);
     toast.success("Profile URL copied to clipboard");
   };
 
   if (!session || !session.user) {
-    return <div>Please login to view your dashboard</div>;
+    return (
+      <div className="text-center mt-40">
+        Please login to view your dashboard
+      </div>
+    );
   }
 
   return (
@@ -130,11 +155,21 @@ const page = () => {
         <div className="flex items-center">
           <input
             type="text"
-            value={profileUrl}
+            value={
+              username
+                ? `${typeof window !== "undefined" ? window.location.origin : ""}${profilePath}`
+                : ""
+            }
             disabled
             className="input input-bordered w-full p-2 mr-2"
           />
-          <Button onClick={copyToClipboard}>Copy</Button>
+          <Button
+            onClick={copyToClipboard}
+            variant="default"
+            className="hover: cursor-pointer"
+          >
+            Copy
+          </Button>
         </div>
       </div>
       <div className="mb-4">
@@ -149,16 +184,16 @@ const page = () => {
         </span>
       </div>
       <Separator />
-      <Button
+      {/* <Button
         className="mt-4"
         variant="outline"
         onClick={(e) => {
           e.preventDefault();
         }}
-      ></Button>
+      ></Button> */}
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {messages.length === 0 ? (
-          messages.map((message, _) => (
+        {messages.length > 0 ? (
+          messages.map((message) => (
             <MessageCard
               key={message._id.toString()}
               message={message}
