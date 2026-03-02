@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import MessageCard from "@/components/MessageCard";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,8 +47,18 @@ const page = () => {
     );
   };
 
-  const { data: session } = useSession();
+  const { data: session, status, update } = useSession();
   console.log("API Session: ", session);
+
+  useEffect(() => {
+    if (session?.user) return;
+
+    const retryInterval = setInterval(() => {
+      void update();
+    }, 1500);
+
+    return () => clearInterval(retryInterval);
+  }, [session?.user, update]);
 
   const isVerified = Boolean(session?.user?.isVerified);
   const form = useForm({
@@ -224,8 +235,11 @@ const page = () => {
 
   if (!session || !session.user) {
     return (
-      <div className="mt-40 text-center text-muted-foreground">
-        Please login to view your dashboard
+      <div className="mt-40 flex items-center justify-center gap-2 text-center text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        {status === "loading"
+          ? "Loading your dashboard..."
+          : "Looking for your account..."}
       </div>
     );
   }
