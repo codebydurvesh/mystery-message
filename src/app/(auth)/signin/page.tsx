@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { signInSchema } from "@/schemas/signInSchema";
 import { signIn } from "next-auth/react";
-import { setTimeout } from "timers/promises";
 
 const page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,10 +62,9 @@ const page = () => {
 
       if (result?.ok) {
         toast.success("Signed in successfully!");
-        setTimeout(2000).then(() => {
-          router.refresh();
-          router.replace("/dashboard");
-        });
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        router.refresh();
+        router.replace("/dashboard");
       }
     } finally {
       setIsSubmitting(false);
