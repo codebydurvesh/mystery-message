@@ -62,7 +62,7 @@ const page = () => {
 
       if (result?.ok) {
         toast.success("Signed in successfully!");
-        router.replace("/dashboard");
+        router.push("/dashboard");
       }
     } finally {
       setIsSubmitting(false);
