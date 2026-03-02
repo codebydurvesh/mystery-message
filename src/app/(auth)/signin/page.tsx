@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { signInSchema } from "@/schemas/signInSchema";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 
 const page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +63,15 @@ const page = () => {
       if (result?.ok) {
         toast.success("Signed in successfully!");
         await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const currentSession = await getSession();
+          if (currentSession?.user) {
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 300));
+        }
+
         router.refresh();
         router.replace("/dashboard");
       }
