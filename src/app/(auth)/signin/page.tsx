@@ -44,6 +44,14 @@ const page = () => {
       });
 
       if (result?.error) {
+        if (result.error.toLowerCase().includes("verify")) {
+          toast.error(
+            "Account not verified. Redirecting to verification page...",
+          );
+          router.replace(`/verify/${encodeURIComponent(data.identifier)}`);
+          return;
+        }
+
         if (result.error === "CredentialsSignin") {
           toast.error("Invalid email/username or password");
         } else {

@@ -8,12 +8,12 @@ import axios, { AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { User } from "next-auth";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import MessageCard from "@/components/MessageCard";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const page = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -30,6 +30,7 @@ const page = () => {
   const { data: session } = useSession();
   console.log("API Session: ", session);
 
+  const isVerified = Boolean(session?.user?.isVerified);
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
     defaultValues: {
@@ -95,11 +96,20 @@ const page = () => {
   useEffect(() => {
     if (!session || !session.user) return;
     fetchMessages();
-    fetchAcceptMessage();
-  }, [session, setValue, fetchAcceptMessage, fetchMessages]);
+    if (isVerified) {
+      fetchAcceptMessage();
+      return;
+    }
+    setValue("acceptMessages", false);
+  }, [session, isVerified, setValue, fetchAcceptMessage, fetchMessages]);
 
   //handle switch change
   const handleSwitchChange = async () => {
+    if (!isVerified) {
+      toast.error("Please verify your account to change this setting");
+      return;
+    }
+
     try {
       const response = await axios.post<ApiResponse>(
         "/api/accept-messages",
@@ -180,17 +190,32 @@ const page = () => {
           </Button>
         </div>
       </div>
-      <div className="mb-5 flex items-center">
-        <Switch
-          {...register("acceptMessages")}
-          checked={acceptMessages}
-          onCheckedChange={handleSwitchChange}
-          disabled={isSwitchLoading}
-        />
-        <span className="ml-2 text-sm text-muted-foreground">
-          Accept Messages: {acceptMessages ? "On" : "Off"}
-        </span>
-      </div>
+      {isVerified ? (
+        <div className="mb-5 flex items-center">
+          <Switch
+            {...register("acceptMessages")}
+            checked={acceptMessages}
+            onCheckedChange={handleSwitchChange}
+            disabled={isSwitchLoading}
+          />
+          <span className="ml-2 text-sm text-muted-foreground">
+            Accept Messages: {acceptMessages ? "On" : "Off"}
+          </span>
+        </div>
+      ) : (
+        <div className="mb-5 rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+          Your account is not verified. Verify your account to turn on message
+          acceptance.{" "}
+          {username ? (
+            <Link
+              href={`/verify/${username}`}
+              className="font-medium text-foreground underline"
+            >
+              Verify now
+            </Link>
+          ) : null}
+        </div>
+      )}
       <Separator />
       {/* <Button
         className="mt-4"
