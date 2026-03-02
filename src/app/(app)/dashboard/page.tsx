@@ -5,21 +5,36 @@ import { acceptMessageSchema } from "@/schemas/acceptMessageSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
 import axios, { AxiosError } from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import MessageCard from "@/components/MessageCard";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+
+const SWITCH_COOLDOWN_MS = 10000;
 
 const page = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [cooldownActive, setCooldownActive] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const cooldownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleDeleteMessage = (messageId: string) => {
     setMessages(
@@ -109,7 +124,21 @@ const page = () => {
       toast.error("Please verify your account to change this setting");
       return;
     }
+    if (cooldownActive) {
+      toast.error("Please wait 10 seconds before toggling again");
+      return;
+    }
+    setConfirmOpen(true);
+  };
 
+  useEffect(() => {
+    return () => {
+      if (cooldownTimerRef.current) clearTimeout(cooldownTimerRef.current);
+    };
+  }, []);
+
+  const handleConfirmSwitch = async () => {
+    setConfirmOpen(false);
     try {
       const response = await axios.post<ApiResponse>(
         "/api/accept-messages",
@@ -122,6 +151,11 @@ const page = () => {
       );
       setValue("acceptMessages", !acceptMessages);
       toast.success(response.data.message);
+      setCooldownActive(true);
+      if (cooldownTimerRef.current) clearTimeout(cooldownTimerRef.current);
+      cooldownTimerRef.current = setTimeout(() => {
+        setCooldownActive(false);
+      }, SWITCH_COOLDOWN_MS);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       if (axiosError.response) {
@@ -196,10 +230,15 @@ const page = () => {
             {...register("acceptMessages")}
             checked={acceptMessages}
             onCheckedChange={handleSwitchChange}
-            disabled={isSwitchLoading}
+            disabled={isSwitchLoading || cooldownActive}
           />
           <span className="ml-2 text-sm text-muted-foreground">
             Accept Messages: {acceptMessages ? "On" : "Off"}
+            {cooldownActive && (
+              <span className="ml-2 text-xs text-yellow-500">
+                (cooldown active – wait 10s)
+              </span>
+            )}
           </span>
         </div>
       ) : (
@@ -239,6 +278,29 @@ const page = () => {
           </p>
         )}
       </div>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {acceptMessages
+                ? "Turn off message acceptance?"
+                : "Turn on message acceptance?"}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {acceptMessages
+                ? "You will stop receiving new anonymous messages."
+                : "You will start receiving anonymous messages from others."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSwitch}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
