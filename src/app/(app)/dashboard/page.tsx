@@ -44,10 +44,16 @@ const page = () => {
   const fetchAcceptMessage = useCallback(async () => {
     setIsSwitchLoading(true);
     try {
-      const response = await axios.get<ApiResponse, any>("/api/get-messages", {
-        withCredentials: true,
-      });
-      setValue("acceptMessages", response.data.isAcceptingMessages);
+      const response = await axios.get<ApiResponse, any>(
+        "/api/accept-messages",
+        {
+          withCredentials: true,
+        },
+      );
+      setValue(
+        "acceptMessages",
+        Boolean(response.data.isAcceptingMessage ?? false),
+      );
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       if (axiosError.response) {
@@ -148,11 +154,13 @@ const page = () => {
   }
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{" "}
-        <div className="flex items-center">
+    <div className="mx-4 my-8 w-full max-w-6xl rounded-xl border bg-card/60 p-6 shadow-sm backdrop-blur md:mx-8 lg:mx-auto">
+      <h1 className="mb-6 text-3xl font-bold tracking-tight md:text-4xl">
+        User Dashboard
+      </h1>
+      <div className="mb-6">
+        <h2 className="mb-2 text-lg font-semibold">Copy Your Unique Link</h2>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <input
             type="text"
             value={
@@ -161,18 +169,18 @@ const page = () => {
                 : ""
             }
             disabled
-            className="input input-bordered w-full p-2 mr-2"
+            className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
           />
           <Button
             onClick={copyToClipboard}
             variant="default"
-            className="hover: cursor-pointer"
+            className="cursor-pointer sm:w-auto"
           >
             Copy
           </Button>
         </div>
       </div>
-      <div className="mb-4">
+      <div className="mb-5 flex items-center">
         <Switch
           {...register("acceptMessages")}
           checked={acceptMessages}
@@ -191,7 +199,7 @@ const page = () => {
           e.preventDefault();
         }}
       ></Button> */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {messages.length > 0 ? (
           messages.map((message) => (
             <MessageCard
@@ -201,7 +209,9 @@ const page = () => {
             />
           ))
         ) : (
-          <p>No messages to display.</p>
+          <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground md:col-span-2 xl:col-span-3">
+            No messages to display.
+          </p>
         )}
       </div>
     </div>

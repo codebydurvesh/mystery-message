@@ -15,10 +15,33 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import messages from "@/data/messages";
+import Link from "next/link";
+
 
 export default function Home() {
   return (
     <>
+      <style>{`
+                @keyframes shine {
+                    0% {
+                        background-position: 0% 50%;
+                    }
+            
+                    50% {
+                        background-position: 100% 50%;
+                    }
+            
+                    100% {
+                        background-position: 0% 50%;
+                    }
+                }
+            
+                .button-bg {
+                    background: conic-gradient(from 0deg, #00F5FF, #000, #000, #00F5FF, #000, #000, #000, #00F5FF);
+                    background-size: 300% 300%;
+                    animation: shine 6s ease-out infinite;
+                }
+            `}</style>
       <div className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12">
         <section className="text-center mb-8 md:mb-12">
           <h1 className="text-3xl md:text-5xl font-bold">
@@ -56,6 +79,13 @@ export default function Home() {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
+      </div>
+      <div className="flex justify-center mt-8 mb-15">
+        <div className="flex justify-center button-bg w-full max-w-[13rem] rounded-full p-0.5 hover:scale-105 transition duration-300 active:scale-100">
+          <Link href="/dashboard" className="flex justify-center px-6 w-full max-w-[13rem] text-bold text-2xl py-2.5 text-white rounded-full font-medium bg-gray-800">
+            Get Started
+          </Link>
+        </div>
       </div>
       <footer className="text-center p-4 md:p-6">
         © 2026 Mystery Message. All rights reserved.

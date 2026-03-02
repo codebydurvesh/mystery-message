@@ -4,11 +4,14 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import { User } from "next-auth";
 
-export async function DELETE(request: Request, {params}: {params: {messageid: string}}) {
-  const messageId =  params.messageid
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ messageid: string }> },
+) {
+  const { messageid: messageId } = await params;
   await dbConnect();
   const session = await getServerSession(authOptions);
-  const user: User = session?.user 
+  const user: User = session?.user;
   if (!session || !session.user) {
     return Response.json(
       {
@@ -40,8 +43,7 @@ export async function DELETE(request: Request, {params}: {params: {messageid: st
       },
       { status: 200 },
     );
-
-  } catch(error) {
+  } catch (error) {
     console.log("Error deleting message: ", error);
     return Response.json(
       {
