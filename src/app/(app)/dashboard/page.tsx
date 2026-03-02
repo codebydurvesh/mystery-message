@@ -13,7 +13,6 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import MessageCard from "@/components/MessageCard";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import {
   AlertDialog,
@@ -60,7 +59,6 @@ const page = () => {
     return () => clearInterval(retryInterval);
   }, [session?.user, update]);
 
-  const isVerified = Boolean(session?.user?.isVerified);
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
     defaultValues: {
@@ -126,20 +124,11 @@ const page = () => {
   useEffect(() => {
     if (!session || !session.user) return;
     fetchMessages();
-    if (isVerified) {
-      fetchAcceptMessage();
-      return;
-    }
-    setValue("acceptMessages", false);
-  }, [session, isVerified, setValue, fetchAcceptMessage, fetchMessages]);
+    fetchAcceptMessage();
+  }, [session, setValue, fetchAcceptMessage, fetchMessages]);
 
   //handle switch change
   const handleSwitchChange = async () => {
-    if (!isVerified) {
-      toast.error("Please verify your account to change this setting");
-      return;
-    }
-
     if (cooldownActive) {
       toast.error("Please wait before toggling again");
       return;
@@ -272,37 +261,22 @@ const page = () => {
             </Button>
           </div>
         </div>
-        {isVerified ? (
-          <div className="mb-5 flex items-center">
-            <Switch
-              {...register("acceptMessages")}
-              checked={acceptMessages}
-              onCheckedChange={handleSwitchChange}
-              disabled={isSwitchLoading || cooldownActive}
-            />
-            <span className="ml-2 text-sm text-muted-foreground">
-              Accept Messages: {acceptMessages ? "On" : "Off"}
+        <div className="mb-5 flex items-center">
+          <Switch
+            {...register("acceptMessages")}
+            checked={acceptMessages}
+            onCheckedChange={handleSwitchChange}
+            disabled={isSwitchLoading || cooldownActive}
+          />
+          <span className="ml-2 text-sm text-muted-foreground">
+            Accept Messages: {acceptMessages ? "On" : "Off"}
+          </span>
+          {cooldownActive && (
+            <span className="ml-3 text-xs font-semibold text-yellow-500">
+              Cooldown: {cooldownRemaining}s
             </span>
-            {cooldownActive && (
-              <span className="ml-3 text-xs font-semibold text-yellow-500">
-                Cooldown: {cooldownRemaining}s
-              </span>
-            )}
-          </div>
-        ) : (
-          <div className="mb-5 rounded-md border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
-            Your account is not verified. Verify your account to turn on message
-            acceptance.{" "}
-            {username ? (
-              <Link
-                href={`/verify/${username}`}
-                className="font-medium text-foreground underline"
-              >
-                Verify now
-              </Link>
-            ) : null}
-          </div>
-        )}
+          )}
+        </div>
         <Separator />
         {/* <Button
         className="mt-4"

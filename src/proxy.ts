@@ -11,14 +11,9 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isLoggedIn = Boolean(token);
-  const isVerified = Boolean(token?.isVerified);
-  const username = typeof token?.username === "string" ? token.username : "";
 
   const isAuthPage =
-    pathname.startsWith("/signin") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/verify");
-  const isVerifyPage = pathname.startsWith("/verify");
+    pathname.startsWith("/signin") || pathname.startsWith("/signup");
   const isDashboardPage = pathname.startsWith("/dashboard");
 
   if (!isLoggedIn && isDashboardPage) {
@@ -26,25 +21,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (isLoggedIn && isAuthPage) {
-    if (!isVerified) {
-      if (isVerifyPage) {
-        return NextResponse.next();
-      }
-
-      if (username) {
-        return NextResponse.redirect(
-          new URL(`/verify/${username}`, request.url),
-        );
-      }
-
-      return NextResponse.next();
-    }
-
     return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  if (isLoggedIn && !isVerified && isDashboardPage && username) {
-    return NextResponse.redirect(new URL(`/verify/${username}`, request.url));
   }
 
   return NextResponse.next();
@@ -52,5 +29,5 @@ export async function proxy(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/signin", "/signup", "/verify/:path*", "/dashboard/:path*"],
+  matcher: ["/signin", "/signup", "/dashboard/:path*"],
 };
