@@ -1,16 +1,10 @@
 # 🕵️ Mystery Message
 
-> **🔗 Live Demo:** [mystery-message-beta.vercel.app](https://mystery-message-beta.vercel.app)
+> **🔗 Live Demo:** [mystery-message-roby.vercel.app](https://mystery-message-roby.vercel.app)
 >
-> **📣 LinkedIn Post:**
-> > 🚀 Excited to share my latest project — **Mystery Message**!
-> >
-> > An anonymous feedback web app where anyone can send you honest, candid messages without revealing their identity. Built with **Next.js 15**, **MongoDB**, **NextAuth**, **Resend**, and **shadcn/ui** — featuring OTP email verification, AI-suggested messages, a personal shareable link, and full message management.
-> >
-> > 🔗 Try it live → [mystery-message-beta.vercel.app](https://mystery-message-beta.vercel.app)
-> > 💻 Source code → [github.com/codebydurvesh/mystery-message](https://github.com/codebydurvesh/mystery-message)
-> >
-> > \#NextJS \#MongoDB \#FullStack \#WebDev \#OpenSource
+> **📣 LinkedIn Post:** [mystery-message-linkedin-post](https://www.linkedin.com/posts/codebydurvesh_nextjs-fullstack-webdevelopment-activity-7434247807370366976-rM7T?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEe1LwUBkliQRFXg63L9cIUE9Fi6JofaW-Y)
+>
+> **Send Me a Feedback here:** [mystery-message-roby.vercel.app/u/codebydurvesh](https://mystery-message-roby.vercel.app/u/codebydurvesh)
 
 ---
 
@@ -23,6 +17,7 @@
 ## ✨ Features
 
 ### 🔐 Authentication & Verification
+
 - **Sign Up** with a unique username, email, and password
 - Real-time **username availability check** (debounced) as you type
 - **Email OTP verification** via [Resend](https://resend.com) — a 6-digit code is sent to your inbox after sign-up
@@ -30,16 +25,19 @@
 - **Protected routes** — unauthenticated users are redirected to `/signin`; unverified users are redirected to `/verify/:username`
 
 ### 📬 Anonymous Messaging
+
 - Every user gets a **unique public profile URL**: `/u/<username>`
 - **Anyone** (no account required) can visit this URL and send an anonymous message
 - Messages are limited to **300 characters** with a live character counter
 - The sender's identity is **never stored or revealed**
 
 ### 🤖 AI-Suggested Questions
+
 - On the send-message page, users can fetch **AI-suggested question prompts** to inspire their anonymous messages
 - Three random question suggestions are served from a curated dataset via `/api/suggest-messages`
 
 ### 🗂️ Dashboard
+
 - View **all received messages** in a responsive card grid (1 / 2 / 3 columns)
 - **Delete individual messages** with a single click (with instant UI update)
 - **Copy your unique profile link** to clipboard with one click
@@ -47,6 +45,7 @@
 - Unverified users see a prompt to verify their account before they can toggle message acceptance
 
 ### 🎨 UI & UX
+
 - Built with **shadcn/ui** components (Card, Button, Switch, Separator, Form, Input, etc.)
 - **Dark / light mode** support via `next-themes`
 - Animated **carousel** on the homepage showcasing sample anonymous messages (auto-plays every 2 seconds)
@@ -107,21 +106,21 @@
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Framework** | [Next.js 15](https://nextjs.org) (App Router) |
-| **Language** | TypeScript |
-| **Database** | MongoDB via [Mongoose](https://mongoosejs.com) |
-| **Auth** | [NextAuth.js v4](https://next-auth.js.org) (Credentials provider) |
-| **Email** | [Resend](https://resend.com) + [React Email](https://react.email) |
-| **UI Components** | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://www.radix-ui.com) |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com) |
-| **Forms** | [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev) |
-| **Carousel** | [Embla Carousel](https://www.embla-carousel.com) with Autoplay |
-| **HTTP Client** | [Axios](https://axios-http.com) |
-| **Toasts** | [Sonner](https://sonner.emilkowal.ski) |
-| **Password Hashing** | [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
-| **Deployment** | [Vercel](https://vercel.com) |
+| Layer                | Technology                                                                |
+| -------------------- | ------------------------------------------------------------------------- |
+| **Framework**        | [Next.js 15](https://nextjs.org) (App Router)                             |
+| **Language**         | TypeScript                                                                |
+| **Database**         | MongoDB via [Mongoose](https://mongoosejs.com)                            |
+| **Auth**             | [NextAuth.js v4](https://next-auth.js.org) (Credentials provider)         |
+| **Email**            | [Resend](https://resend.com) + [React Email](https://react.email)         |
+| **UI Components**    | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://www.radix-ui.com) |
+| **Styling**          | [Tailwind CSS v4](https://tailwindcss.com)                                |
+| **Forms**            | [React Hook Form](https://react-hook-form.com) + [Zod](https://zod.dev)   |
+| **Carousel**         | [Embla Carousel](https://www.embla-carousel.com) with Autoplay            |
+| **HTTP Client**      | [Axios](https://axios-http.com)                                           |
+| **Toasts**           | [Sonner](https://sonner.emilkowal.ski)                                    |
+| **Password Hashing** | [bcryptjs](https://github.com/dcodeIO/bcrypt.js)                          |
+| **Deployment**       | [Vercel](https://vercel.com)                                              |
 
 ---
 
@@ -170,6 +169,7 @@ src/
 ## 🚀 Getting Started Locally
 
 ### Prerequisites
+
 - Node.js 18+
 - A MongoDB database (Atlas free tier works)
 - A [Resend](https://resend.com) account and API key
@@ -213,17 +213,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🌐 API Reference
 
-| Method | Endpoint | Auth Required | Description |
-|---|---|---|---|
-| `POST` | `/api/signup` | ❌ | Register a new user; sends OTP email |
-| `POST` | `/api/verify-code` | ❌ | Verify OTP and activate account |
-| `GET` | `/api/chech-username-unique` | ❌ | Check if a username is available |
-| `GET` | `/api/accept-messages` | ✅ | Get current accept-messages setting |
-| `POST` | `/api/accept-messages` | ✅ | Toggle accept-messages on/off |
-| `POST` | `/api/send-message` | ❌ | Send an anonymous message to a user |
-| `GET` | `/api/get-messages` | ✅ | Retrieve all messages for the signed-in user |
-| `DELETE` | `/api/delete-message/:id` | ✅ | Delete a specific message by ID |
-| `GET` | `/api/suggest-messages` | ❌ | Get 3 random AI-style question suggestions |
+| Method   | Endpoint                     | Auth Required | Description                                  |
+| -------- | ---------------------------- | ------------- | -------------------------------------------- |
+| `POST`   | `/api/signup`                | ❌            | Register a new user; sends OTP email         |
+| `POST`   | `/api/verify-code`           | ❌            | Verify OTP and activate account              |
+| `GET`    | `/api/chech-username-unique` | ❌            | Check if a username is available             |
+| `GET`    | `/api/accept-messages`       | ✅            | Get current accept-messages setting          |
+| `POST`   | `/api/accept-messages`       | ✅            | Toggle accept-messages on/off                |
+| `POST`   | `/api/send-message`          | ❌            | Send an anonymous message to a user          |
+| `GET`    | `/api/get-messages`          | ✅            | Retrieve all messages for the signed-in user |
+| `DELETE` | `/api/delete-message/:id`    | ✅            | Delete a specific message by ID              |
+| `GET`    | `/api/suggest-messages`      | ❌            | Get 3 random AI-style question suggestions   |
 
 ---
 
