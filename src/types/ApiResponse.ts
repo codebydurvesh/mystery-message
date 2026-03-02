@@ -6,4 +6,5 @@ export interface ApiResponse {
   isAcceptingMessage?: boolean;
   isAcceptingMessages?: boolean;
   messages?: Array<Message>;
+  questions?: string[];
 }
