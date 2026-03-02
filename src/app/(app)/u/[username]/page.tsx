@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import * as z from "zod";
 import axios, { AxiosError } from "axios";
@@ -53,18 +53,18 @@ const page = () => {
     }
   };
   return (
-    <div className="m-10">
+    <div className="mx-auto my-10 w-full max-w-4xl rounded-xl border border-border/60 bg-card/70 p-6 shadow-sm md:p-8">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           <FormField
             name="content"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-4xl font-bold mb-4 font-geist-mono">
+                <FormLabel className="mb-2 block text-3xl font-bold tracking-tight font-geist-mono md:text-4xl">
                   Send an Anonymous Message to {params.username}
                 </FormLabel>
-                <FormLabel className="text-sm text-gray-500 mb-2">
+                <FormLabel className="mb-3 block text-sm text-muted-foreground">
                   Enter the message you want to send below
                 </FormLabel>
                 <FormControl>

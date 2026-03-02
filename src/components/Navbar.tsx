@@ -10,20 +10,20 @@ const Navbar = () => {
   const user: User = session?.user as User;
 
   return (
-    <nav className="p-4 md:p-6 shadow-md">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-        <a href="/" className="text-xl font-bold mb-4 md:mb-0">
+    <nav className="sticky top-0 z-40 border-b border-border/60 bg-background/80 p-4 backdrop-blur md:p-5">
+      <div className="container mx-auto flex flex-col items-center justify-between gap-3 md:flex-row">
+        <a href="/" className="text-xl font-semibold tracking-tight">
           Mystery Message
         </a>
         {session ? (
-          <>
-            <span className="mr-4">
+          <div className="flex w-full flex-col items-center gap-2 md:w-auto md:flex-row md:gap-4">
+            <span className="text-sm text-muted-foreground">
               Welcome, {user?.username || user?.email}
             </span>
             <Button onClick={() => signOut()} className="w-full md:w-auto">
               Logout
             </Button>
-          </>
+          </div>
         ) : (
           <Link href="/signin">
             <Button className="w-full md:w-auto">Login</Button>

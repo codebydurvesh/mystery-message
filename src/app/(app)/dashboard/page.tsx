@@ -147,14 +147,14 @@ const page = () => {
 
   if (!session || !session.user) {
     return (
-      <div className="text-center mt-40">
+      <div className="mt-40 text-center text-muted-foreground">
         Please login to view your dashboard
       </div>
     );
   }
 
   return (
-    <div className="mx-4 my-8 w-full max-w-6xl rounded-xl border bg-card/60 p-6 shadow-sm backdrop-blur md:mx-8 lg:mx-auto">
+    <div className="mx-4 my-8 w-full max-w-6xl rounded-xl border border-border/60 bg-card/70 p-6 shadow-sm backdrop-blur md:mx-8 lg:mx-auto">
       <h1 className="mb-6 text-3xl font-bold tracking-tight md:text-4xl">
         User Dashboard
       </h1>
@@ -187,7 +187,7 @@ const page = () => {
           onCheckedChange={handleSwitchChange}
           disabled={isSwitchLoading}
         />
-        <span className="ml-2">
+        <span className="ml-2 text-sm text-muted-foreground">
           Accept Messages: {acceptMessages ? "On" : "Off"}
         </span>
       </div>

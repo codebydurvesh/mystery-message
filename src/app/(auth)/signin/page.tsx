@@ -3,11 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import axios, { AxiosError } from "axios";
-import { ApiResponse } from "@/types/ApiResponse";
 import { Form } from "@/components/ui/form";
 import {
   FormControl,
@@ -65,12 +63,12 @@ const page = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-          <h1 className="text-center text-6xl font-black font-geist-mono mb-4">
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+        <div className="w-full max-w-md space-y-8 rounded-xl border border-border/60 bg-card/80 p-8 shadow-sm">
+          <h1 className="mb-3 text-center text-5xl font-black font-geist-mono tracking-tight">
             Mystery Message
           </h1>
-          <p className="mb-4 text-center mb-8">
+          <p className="mb-8 text-center text-sm text-muted-foreground">
             Sign in to continue your anonymous adventure!
           </p>
           <div>
@@ -117,8 +115,8 @@ const page = () => {
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Signing in...
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     </>
                   ) : (
                     "Sign in"
@@ -127,9 +125,9 @@ const page = () => {
               </form>
             </Form>
           </div>
-          <div className="text-center">
+          <div className="text-center text-sm text-muted-foreground">
             Don't have an Account?{" "}
-            <Link href="/signup" className="text-blue-500 hover:underline">
+            <Link href="/signup" className="text-foreground underline">
               Sign up
             </Link>
           </div>

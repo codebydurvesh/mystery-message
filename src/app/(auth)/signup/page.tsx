@@ -17,7 +17,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,6 @@ const page = () => {
 
   const debounced = useDebounceCallback(setUsername, 500);
   const router = useRouter();
-
 
   // zod implementation
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -85,12 +83,12 @@ const page = () => {
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
-          <h1 className="text-center text-6xl font-black font-geist-mono mb-4">
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 py-10">
+        <div className="w-full max-w-md space-y-8 rounded-xl border border-border/60 bg-card/80 p-8 shadow-sm">
+          <h1 className="mb-3 text-center text-5xl font-black font-geist-mono tracking-tight">
             Join Mystery Message
           </h1>
-          <p className="mb-4 text-center mb-8">
+          <p className="mb-8 text-center text-sm text-muted-foreground">
             Sign up to start your anonymos adventure!
           </p>
           <div>
@@ -116,7 +114,7 @@ const page = () => {
                         />
                       </FormControl>
                       {isCheckingUsername && (
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="mt-1 text-sm text-muted-foreground">
                           Checking username...
                         </p>
                       )}
@@ -165,8 +163,8 @@ const page = () => {
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
                       Signing up...
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     </>
                   ) : (
                     "Sign up"
@@ -175,9 +173,9 @@ const page = () => {
               </form>
             </Form>
           </div>
-          <div className="text-center">
+          <div className="text-center text-sm text-muted-foreground">
             Already a member?{" "}
-            <Link href="/signin" className="text-blue-500 hover:underline">
+            <Link href="/signin" className="text-foreground underline">
               Sign in
             </Link>
           </div>

@@ -17,10 +17,9 @@ import Autoplay from "embla-carousel-autoplay";
 import messages from "@/data/messages";
 import Link from "next/link";
 
-
 export default function Home() {
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <style>{`
                 @keyframes shine {
                     0% {
@@ -42,54 +41,67 @@ export default function Home() {
                     animation: shine 6s ease-out infinite;
                 }
             `}</style>
-      <div className="flex-grow flex flex-col items-center justify-center px-4 md:px-24 py-12">
-        <section className="text-center mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold">
-            Dive into the World of Anonymous Conversations
-          </h1>
-          <p className="mt-3 md:mt-4 text-base">
-            Explore Mystery Message - Where your identity remains a secret
-          </p>
-        </section>
-        <Carousel
-          className="w-full max-w-[12rem] sm:max-w-xs"
-          plugins={[
-            Autoplay({
-              delay: 2000,
-            }),
-          ]}
-        >
-          <CarouselContent>
-            {messages.map((message, index) => (
-              <CarouselItem key={index}>
-                <div className="p-1">
-                  <Card>
-                    <CardHeader>{message.title}</CardHeader>
-                    <CardContent className="flex aspect-square items-center justify-center p-6">
-                      <span className="text-lg">{message.content}</span>
-                    </CardContent>
-                    <CardFooter>
-                      <span>{message.received}</span>
-                    </CardFooter>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div>
-      <div className="flex justify-center mt-8 mb-15">
-        <div className="flex justify-center button-bg w-full max-w-[13rem] rounded-full p-0.5 hover:scale-105 transition duration-300 active:scale-100">
-          <Link href="/dashboard" className="flex justify-center px-6 w-full max-w-[13rem] text-bold text-2xl py-2.5 text-white rounded-full font-medium bg-gray-800">
-            Get Started
-          </Link>
+      <main className="flex flex-1 flex-col items-center justify-center bg-gradient-to-b from-background via-background to-muted/20 px-4 py-10 md:px-24">
+        <div className="w-full max-w-5xl rounded-2xl border border-border/60 bg-card/40 p-6 shadow-sm md:p-10">
+          <section className="mb-10 text-center md:mb-12">
+            <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
+              Dive into the World of Anonymous Feedbacks
+            </h1>
+            <p className="mx-auto mt-3 max-w-2xl text-base text-muted-foreground md:mt-4">
+              Explore Mystery Message - Where your identity remains a secret
+            </p>
+          </section>
+
+          <div className="flex justify-center">
+            <Carousel
+              className="w-full max-w-[14rem] sm:max-w-xs lg:max-w-sm"
+              plugins={[
+                Autoplay({
+                  delay: 2000,
+                }),
+              ]}
+            >
+              <CarouselContent>
+                {messages.map((message, index) => (
+                  <CarouselItem key={index}>
+                    <div className="p-1">
+                      <Card className="border-border/60 bg-card/80 py-4 shadow-sm">
+                        <CardHeader className="pb-2 text-sm font-medium text-muted-foreground">
+                          {message.title}
+                        </CardHeader>
+                        <CardContent className="flex min-h-40 items-center justify-center p-5 sm:min-h-44 lg:min-h-48">
+                          <span className="text-center text-base leading-relaxed">
+                            {message.content}
+                          </span>
+                        </CardContent>
+                        <CardFooter className="text-xs text-muted-foreground">
+                          <span>{message.received}</span>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <div className="flex w-full max-w-[13rem] justify-center rounded-full p-0.5 transition duration-300 button-bg hover:scale-105 active:scale-100">
+              <Link
+                href="/dashboard"
+                className="flex w-full max-w-[13rem] justify-center rounded-full bg-card px-6 py-2.5 text-2xl font-medium text-foreground"
+              >
+                Get Started
+              </Link>
+            </div>
+          </div>
         </div>
-      </div>
-      <footer className="text-center p-4 md:p-6">
+      </main>
+      <footer className="mt-auto border-t border-border/60 p-4 text-center text-sm text-muted-foreground md:p-6">
         © 2026 Mystery Message. All rights reserved.
       </footer>
-    </>
+    </div>
   );
 }
