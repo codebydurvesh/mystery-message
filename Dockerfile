@@ -1,18 +1,26 @@
-FROM node:20-alpine
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 
-WORKDIR /src/app
+WORKDIR /app
 
 COPY package*.json ./
-COPY package-lock.json ./
-
-RUN npm install
+RUN npm ci
 
 COPY . .
-
 RUN npm run build
+
+# Stage 2: Production
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
-
-
+CMD ["npm", "start"]
