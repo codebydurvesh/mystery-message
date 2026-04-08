@@ -1,0 +1,13 @@
+verison: "3.8"
+
+services:
+  app:
+    image: codebydurvesh/test01:latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    container_name: mystery-message
